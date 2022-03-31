@@ -9,7 +9,9 @@
   },
   "dependencies": {
     "element-plus": "^2.1.7",
-    "vue": "^3.2.25"
+    "pinia": "^2.0.12",
+    "vue": "^3.2.25",
+    "vue-router": "^4.0.14"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.19.1",
