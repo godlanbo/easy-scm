@@ -6,12 +6,31 @@ module.exports = {
     node: true,
   },
   extends: [
-    '@antfu',
+    // vue3 插件
+    'plugin:vue/vue3-recommended',
+    // eslint 官方插件
+    'eslint:recommended',
+    // vue-ts 插件
+    '@vue/typescript/recommended',
+    // prettier 插件
+    'plugin:prettier/recommended',
   ],
   parserOptions: {
     parser: '@typescript-eslint/parser',
     ecmaVersion: 2021,
   },
   plugins: [],
-  rules: {},
+  rules: {
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'prettier/prettier': [
+      'error',
+      {
+        trailingComma: 'all',
+        semi: false,
+        singleQuote: true,
+        arrowParens: 'avoid',
+      },
+    ],
+  },
 }
