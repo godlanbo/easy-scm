@@ -3,6 +3,7 @@ import vue from '@vitejs/plugin-vue'
 // Arco components auto import
 import Components from 'unplugin-vue-components/vite'
 import { ArcoResolver } from 'unplugin-vue-components/resolvers'
+import prismjs from 'vite-plugin-prismjs'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,6 +11,12 @@ export default defineConfig({
     vue(),
     Components({
       resolvers: [ArcoResolver()],
+    }),
+    prismjs({
+      languages: ['html', 'js'],
+      plugins: ['line-numbers'],
+      theme: 'okaidia',
+      css: true,
     }),
   ],
   resolve: {
@@ -20,6 +27,7 @@ export default defineConfig({
       utils: '/src/utils',
       comp: '/src/components',
       layout: '/src/layout',
+      images: '/src/assets/images',
     },
   },
 })
