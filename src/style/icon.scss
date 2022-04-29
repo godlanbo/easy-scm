@@ -1,0 +1,22 @@
+@font-face {
+  font-family: 'iconfont'; /* Project id 3339304 */
+  src: url('//at.alicdn.com/t/font_3339304_5nprfsk30e7.woff2?t=1650526580303')
+      format('woff2'),
+    url('//at.alicdn.com/t/font_3339304_5nprfsk30e7.woff?t=1650526580303')
+      format('woff'),
+    url('//at.alicdn.com/t/font_3339304_5nprfsk30e7.ttf?t=1650526580303')
+      format('truetype');
+}
+
+[class^='icon-'],
+[class*=' icon-'] {
+  font-family: 'iconfont' !important;
+  font-style: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-fire:before {
+  content: '\e729';
+}
