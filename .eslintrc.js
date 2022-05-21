@@ -34,5 +34,6 @@ module.exports = {
         arrowParens: 'avoid',
       },
     ],
+    'no-undef': 'off',
   },
 }
