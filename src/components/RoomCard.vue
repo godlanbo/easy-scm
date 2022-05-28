@@ -36,7 +36,7 @@ function handleTitleClick() {
     }"
   >
     <div
-      class="card-header flex items-center justify-between mb-6 pb-2 border-b border-gray-light border-solid"
+      class="card-header flex items-center justify-between mb-4 pb-2 border-b border-gray-light border-solid"
     >
       <div
         class="card-title"

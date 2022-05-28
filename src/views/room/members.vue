@@ -1,0 +1,49 @@
+<script setup lang="ts">
+import { reactive } from 'vue'
+import RoomCard from '../../components/RoomCard.vue'
+import ListItem from '../../components/ListItem.vue'
+import List from '../../components/List.vue'
+
+const memberData = reactive<MemberInfo[]>([
+  {
+    id: 'godlanbo',
+    name: 'godlanbo',
+    eamil: '111222333@qq.com',
+    avatar:
+      'https://repository-images.githubusercontent.com/293860197/7fd72080-496d-11eb-8fe0-238b38a0746a',
+  },
+  {
+    id: 'zzz',
+    name: 'zzz',
+    eamil: '211222333@qq.com',
+    avatar:
+      'https://repository-images.githubusercontent.com/293860197/7fd72080-496d-11eb-8fe0-238b38a0746a',
+  },
+])
+</script>
+<template>
+  <div class="members-container">
+    <section class="member-row">
+      <RoomCard title="Members" only-show min-height="480">
+        <template #toolbar>
+          <a-button shape="round" type="primary">Add Member +</a-button>
+        </template>
+        <template #content>
+          <List>
+            <ListItem
+              v-for="memberItem in memberData"
+              :key="memberItem.id"
+              :title="memberItem.name"
+              :description="memberItem.eamil"
+              :is-cover="false"
+              :cover="memberItem.avatar"
+              :can-click="false"
+            >
+            </ListItem>
+          </List>
+        </template>
+      </RoomCard>
+    </section>
+  </div>
+</template>
+<style lang="scss" scoped></style>

@@ -19,12 +19,12 @@ function isProjectItem(
 const emit = defineEmits<{
   (e: 'onCollect', item: ExploreItem): void
   (e: 'onJumpRoom', owner: string): void
-  (e: 'onJumpProject', owner: string, projectId: string): void
+  (e: 'onJumpProject', owner: string, projectId: number): void
 }>()
 function handleCollectExplore(item: ExploreItem) {
   emit('onCollect', item)
 }
-function handleClickProject(item: ExploreItem) {
+function handleClickProject(item: ExploreProjectItem) {
   emit('onJumpProject', item.owner, item.id)
 }
 function handleClickRoom(item: ExploreItem) {
@@ -59,7 +59,9 @@ function handleClickRoom(item: ExploreItem) {
             <span>{{ ' ' }}/{{ ' ' }}</span>
             <div
               class="hover:underline inline font-extrabold"
-              @click="handleClickProject(articleData)"
+              @click="
+                isProjectItem(articleData) && handleClickProject(articleData)
+              "
             >
               <span>{{ articleData.name }}</span>
             </div>
@@ -90,7 +92,7 @@ function handleClickRoom(item: ExploreItem) {
         <div v-if="isRoomItem(articleData)" class="create-date">
           <i class="icon-date mr-2"></i>
           <span>创建于：</span>
-          <span>{{ dateTransformer(articleData.createdDate) }}</span>
+          <span>{{ dateTransformer(articleData.createDate) }}</span>
         </div>
         <div v-else class="update-date">
           <i class="icon-date mr-2"></i>

@@ -4,8 +4,36 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
-    ElButton: typeof import('element-plus/es')['ElButton']
+    AAvatar: typeof import('@arco-design/web-vue')['Avatar']
+    AButton: typeof import('@arco-design/web-vue')['Button']
+    AInput: typeof import('@arco-design/web-vue')['Input']
+    AInputSearch: typeof import('@arco-design/web-vue')['InputSearch']
+    AInputTag: typeof import('@arco-design/web-vue')['InputTag']
+    AList: typeof import('@arco-design/web-vue')['List']
+    AListItem: typeof import('@arco-design/web-vue')['ListItem']
+    AListItemMeta: typeof import('@arco-design/web-vue')['ListItemMeta']
+    AMenu: typeof import('@arco-design/web-vue')['Menu']
+    AMenuItem: typeof import('@arco-design/web-vue')['MenuItem']
+    AOption: typeof import('@arco-design/web-vue')['Option']
+    APopover: typeof import('@arco-design/web-vue')['Popover']
+    ARadio: typeof import('@arco-design/web-vue')['Radio']
+    ARadioGroup: typeof import('@arco-design/web-vue')['RadioGroup']
+    ASelect: typeof import('@arco-design/web-vue')['Select']
+    ASpin: typeof import('@arco-design/web-vue')['Spin']
+    AStep: typeof import('@arco-design/web-vue')['Step']
+    ASteps: typeof import('@arco-design/web-vue')['Steps']
+    ASwitch: typeof import('@arco-design/web-vue')['Switch']
+    ATag: typeof import('@arco-design/web-vue')['Tag']
+    ATextarea: typeof import('@arco-design/web-vue')['Textarea']
+    BuildStatusTag: typeof import('./src/components/BuildStatusTag.vue')['default']
+    ExploreCard: typeof import('./src/components/ExploreCard.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
+    List: typeof import('./src/components/List.vue')['default']
+    ListItem: typeof import('./src/components/ListItem.vue')['default']
+    Logo: typeof import('./src/components/Logo.vue')['default']
+    PreviewCode: typeof import('./src/components/PreviewCode.vue')['default']
+    RoomCard: typeof import('./src/components/RoomCard.vue')['default']
+    UploadImage: typeof import('./src/components/UploadImage.vue')['default']
   }
 }
 

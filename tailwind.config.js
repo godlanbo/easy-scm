@@ -10,6 +10,9 @@ module.exports = {
           light: '#f9fafa',
           lighter: '#f2f5f8',
         },
+        green: {
+          nodejs: '#699f63',
+        },
         theme: {
           text: '#2c3f51',
           primary: '#30849a',

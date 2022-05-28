@@ -63,6 +63,7 @@ const props = withDefaults(
       >
         <i class="icon-arrow-right"></i>
       </div>
+      <div v-else class="placeholder"></div>
     </slot>
   </div>
 </template>
