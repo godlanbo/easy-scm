@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { useUserStore } from '../store'
+import { getToken } from '../utils'
 // import VueRouter from 'vue-router'
 
 const HelloWorld = () => import('../components/HelloWorld.vue')
@@ -172,6 +174,31 @@ const router = createRouter({
   ],
 })
 
+const whiteList: string[] = ['/start', '/login', '/404']
+router.beforeEach(async (to, from, next) => {
+  if (whiteList.indexOf(to.path) !== -1) {
+    next()
+  } else {
+    const hasToken = getToken()
+    if (hasToken) {
+      const userStore = useUserStore()
+      await userStore.registerUser()
+      if (to.path === '/login') {
+        // if is logged in, redirect to the home page
+        next({
+          name: 'Overview',
+          params: {
+            owner: userStore.userInfo?.id,
+          },
+        })
+      } else {
+        next()
+      }
+    } else {
+      next(`/login`)
+    }
+  }
+})
 // router.addRoute()
 
 export default router
