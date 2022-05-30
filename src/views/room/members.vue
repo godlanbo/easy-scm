@@ -1,25 +1,19 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref, watchEffect } from 'vue'
 import RoomCard from '../../components/RoomCard.vue'
 import ListItem from '../../components/ListItem.vue'
 import List from '../../components/List.vue'
+import { getRoomMemberList } from '../../api'
+import { useRoomStore } from '../../store'
 
-const memberData = reactive<MemberInfo[]>([
-  {
-    id: 'godlanbo',
-    name: 'godlanbo',
-    eamil: '111222333@qq.com',
-    avatar:
-      'https://repository-images.githubusercontent.com/293860197/7fd72080-496d-11eb-8fe0-238b38a0746a',
-  },
-  {
-    id: 'zzz',
-    name: 'zzz',
-    eamil: '211222333@qq.com',
-    avatar:
-      'https://repository-images.githubusercontent.com/293860197/7fd72080-496d-11eb-8fe0-238b38a0746a',
-  },
-])
+const memberData = ref<User[]>([])
+const roomStore = useRoomStore()
+watchEffect(async () => {
+  if (roomStore.roomInfo) {
+    const rawMemberList = await getRoomMemberList(roomStore.roomInfo.id)
+    memberData.value = rawMemberList.data
+  }
+})
 </script>
 <template>
   <div class="members-container">

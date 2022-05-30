@@ -4,12 +4,26 @@ import { useProjectStore } from '../../store'
 import UploadImage from '../../components/UploadImage.vue'
 import { dateTransformer, BUILD_STATUS } from '../../utils'
 import ListItem from '../../components/ListItem.vue'
-import { reactive } from 'vue'
+import { reactive, ref, watchEffect } from 'vue'
 import List from '../../components/List.vue'
 import BuildStatusTag from '../../components/BuildStatusTag.vue'
+import { useRoute } from 'vue-router'
+import { getBuildListByProject, getProjectInfo } from '../../api'
 const projectStore = useProjectStore()
-const buildData = reactive<BuildInfo[]>([])
-const currentProjectInfo = projectStore.currentProjectInfo
+const buildData = ref<BuildInfo[]>([])
+const route = useRoute()
+const projectInfo = ref<ProjectInfo | null>(projectStore.currentProjectInfo)
+const currentProjectId = ref<string>(route.params.projectId as string)
+watchEffect(async () => {
+  const rawProjectInfoRes = await getProjectInfo(+currentProjectId.value)
+  projectInfo.value = rawProjectInfoRes.data
+  projectStore.setCurrentProject(projectInfo.value)
+})
+
+watchEffect(async () => {
+  const rawBuildListRes = await getBuildListByProject(currentProjectId.value)
+  buildData.value = rawBuildListRes.data
+})
 
 function handleSearchList(searchValue: string) {
   console.log(searchValue)
@@ -21,36 +35,32 @@ function handleSearchList(searchValue: string) {
       <RoomCard
         class="max-w-2xl"
         only-show
-        :title="currentProjectInfo?.name"
+        :title="projectInfo?.name"
         min-height="200"
       >
         <template #content>
           <div class="project-info flex">
             <div class="project-info-base flex flex-col flex-grow">
               <div class="desc text-black-default text-xl mb-4">
-                {{ currentProjectInfo?.desc }}
+                {{ projectInfo?.desc }}
               </div>
               <div class="create-info text-base text-gray-500 mb-4">
                 <span>导入自</span
                 ><a
                   class="text-gray-500 hover:text-black-default"
-                  :href="currentProjectInfo?.repoUrl"
+                  :href="projectInfo?.repoUrl"
                   >Github</a
                 >
                 ,
                 <span>创建于：</span>
-                <span>{{
-                  dateTransformer(currentProjectInfo?.createDate)
-                }}</span>
+                <span>{{ dateTransformer(projectInfo?.createDate) }}</span>
               </div>
               <div class="build-info text-base text-gray-500 mb-4">
                 <span>当前版本：</span>
-                <span>V{{ currentProjectInfo?.version }}</span>
+                <span>V{{ projectInfo?.version }}</span>
                 ,
                 <span>最后更新时间：</span>
-                <span>{{
-                  dateTransformer(currentProjectInfo?.updateDate)
-                }}</span>
+                <span>{{ dateTransformer(projectInfo?.updateDate) }}</span>
               </div>
               <div class="toolbar">
                 <a-button

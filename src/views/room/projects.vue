@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref, watchEffect } from 'vue'
 import RoomCard from '../../components/RoomCard.vue'
 import ListItem from '../../components/ListItem.vue'
 import { dateTransformer } from '../../utils'
 import List from '../../components/List.vue'
-const projectData = reactive<ProjectInfo[]>([])
+import { getRoomProjectList } from '../../api'
+const projectData = ref<ProjectInfo[]>([])
+
+watchEffect(async () => {
+  const rawRoomProjectRes = await getRoomProjectList()
+  projectData.value = rawRoomProjectRes.data
+})
 
 function handleSearchList(searchValue: string) {
   console.log(searchValue)
@@ -34,6 +40,7 @@ function handleSearchList(searchValue: string) {
               :title="projectItem.name"
               :description="projectItem.desc"
               :cover="projectItem.cover"
+              need-placeholder
             >
               <template #detail>
                 <div class="list-item-detail self-start">

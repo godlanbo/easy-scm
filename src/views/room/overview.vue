@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive } from 'vue'
+import { onMounted, reactive, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import RoomCard from '../../components/RoomCard.vue'
 import { dateTransformer, BUILD_STATUS } from '../../utils'
@@ -8,12 +8,16 @@ import ListItem from '../../components/ListItem.vue'
 import List from '../../components/List.vue'
 import { useProjectStore, useRoomStore, useUserStore } from '../../store'
 import BuildStatusTag from '../../components/BuildStatusTag.vue'
+import { getRoomBuildList, getRoomMemberList } from '../../api'
 
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
 const roomStore = useRoomStore()
 const projectStore = useProjectStore()
+const buildData = ref<BuildInfo[]>([])
+const memberData = ref<User[]>([])
+const buildCount = ref(0)
 
 onMounted(async () => {
   try {
@@ -26,85 +30,15 @@ onMounted(async () => {
   }
 })
 
-const buildData = reactive<BuildInfo[]>([
-  {
-    status: BUILD_STATUS.Failed,
-    id: '12',
-    buildBy: 'godlanbo',
-    buildByName: 'godlanbo',
-    belongRoom: '10',
-    belongProject: '12',
-    buildBranch: 'master',
-    createDate: '1651752179061',
-    belongProjectName: 'testProejctName',
-    buildVersion: '1.4.0',
-  },
-  {
-    status: BUILD_STATUS.Success,
-    id: '13',
-    buildBy: 'godlanbo',
-    buildByName: 'godlanbo',
-    belongRoom: '10',
-    belongProject: '12',
-    buildBranch: 'master',
-    createDate: '1651752179061',
-    belongProjectName: 'testProejctName',
-    buildVersion: '1.4.1',
-  },
-  {
-    status: BUILD_STATUS.Canceled,
-    id: '14',
-    buildBy: 'godlanbo',
-    buildByName: 'godlanbo',
-    belongRoom: '10',
-    belongProject: '12',
-    buildBranch: 'master',
-    createDate: '1651752179061',
-    belongProjectName: 'testProejctName',
-    buildVersion: '1.4.2',
-  },
-  {
-    status: BUILD_STATUS.Canceled,
-    id: '15',
-    buildBy: 'godlanbo',
-    buildByName: 'godlanbo',
-    belongRoom: '10',
-    belongProject: '12',
-    buildBranch: 'master',
-    createDate: '1651752179061',
-    belongProjectName: 'testProejctName',
-    buildVersion: '1.4.3',
-  },
-  {
-    status: BUILD_STATUS.Canceled,
-    id: '16',
-    buildBy: 'godlanbo',
-    buildByName: 'godlanbo',
-    belongRoom: '10',
-    belongProject: '12',
-    buildBranch: 'master',
-    createDate: '1651752179061',
-    belongProjectName: 'testProejctName',
-    buildVersion: '1.4.4',
-  },
-])
-
-const memberData = reactive<MemberInfo[]>([
-  {
-    id: 'godlanbo',
-    name: 'godlanbo',
-    eamil: '111222333@qq.com',
-    avatar:
-      'https://repository-images.githubusercontent.com/293860197/7fd72080-496d-11eb-8fe0-238b38a0746a',
-  },
-  {
-    id: 'zzz',
-    name: 'zzz',
-    eamil: '211222333@qq.com',
-    avatar:
-      'https://repository-images.githubusercontent.com/293860197/7fd72080-496d-11eb-8fe0-238b38a0746a',
-  },
-])
+watchEffect(async () => {
+  if (roomStore.roomInfo) {
+    const rawRoomBuildRes = await getRoomBuildList(roomStore.roomInfo.id)
+    const rawRoomMemberRes = await getRoomMemberList(roomStore.roomInfo.id)
+    buildCount.value = rawRoomBuildRes.data.length
+    buildData.value = rawRoomBuildRes.data.slice(0, 6)
+    memberData.value = rawRoomMemberRes.data
+  }
+})
 
 function handleToProjects(projectInfo: ProjectInfo) {
   projectStore.setCurrentProject(projectInfo)
@@ -136,6 +70,11 @@ console.log(route.params)
           <div class="flex flex-grow">
             <div
               class="pro-part relative mr-2 cursor-pointer hover:bg-gray-lighter transition-colors duration-200 basis-1/4 rounded-md overflow-hidden bg-gray-light"
+              @click="
+                $router.push({
+                  name: 'Projects',
+                })
+              "
             >
               <div class="part-decoration h-2 bg-gray-200"></div>
               <div class="absolute text-base text-black-default right-2 top-4">
@@ -154,6 +93,11 @@ console.log(route.params)
             </div>
             <div
               class="build-part relative mr-2 cursor-pointer hover:bg-gray-lighter transition-colors duration-200 basis-1/4 rounded-md overflow-hidden bg-gray-light"
+              @click="
+                $router.push({
+                  name: 'Members',
+                })
+              "
             >
               <div class="part-decoration h-2 bg-gray-200"></div>
               <div class="absolute text-base text-black-default right-2 top-4">
@@ -181,7 +125,7 @@ console.log(route.params)
                 <div
                   class="part-content text-xl font-semibold text-black-default"
                 >
-                  5
+                  {{ buildCount }}
                 </div>
               </div>
             </div>
@@ -220,6 +164,7 @@ console.log(route.params)
               :title="projectItem.name"
               :description="projectItem.desc"
               :cover="projectItem.cover"
+              need-placeholder
               @click="handleToProjects(projectItem)"
             ></ListItem>
           </List>
