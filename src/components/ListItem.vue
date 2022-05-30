@@ -6,10 +6,12 @@ const props = withDefaults(
     cover?: string
     canClick?: boolean
     isCover?: boolean
+    needPlaceholder?: boolean
   }>(),
   {
     canClick: true,
     isCover: true,
+    needPlaceholder: false,
   },
 )
 </script>
@@ -41,6 +43,13 @@ const props = withDefaults(
             alt="meta-avatar"
             class="w-full h-full object-cover"
           />
+        </div>
+      </template>
+      <template v-else-if="needPlaceholder">
+        <div
+          class="placeholder-cover rounded-lg mr-4 cursor-pointer text-6xl w-32 h-24 flex items-center justify-center bg-theme-primary/20"
+        >
+          <i class="icon-fire text-theme-primary"></i>
         </div>
       </template>
       <slot name="meta">

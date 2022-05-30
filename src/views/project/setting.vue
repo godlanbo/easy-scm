@@ -4,12 +4,20 @@ import { dateTransformer } from '../../utils'
 import RoomCard from '../../components/RoomCard.vue'
 import UploadImage from '../../components/UploadImage.vue'
 import { useRoute, useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
+import { getProjectInfo } from '../../api'
 const projectStore = useProjectStore()
-const currentProjectInfo = projectStore.currentProjectInfo
-
+const currentProjectInfo = ref<ProjectInfo | null>(
+  projectStore.currentProjectInfo,
+)
 const route = useRoute()
 const router = useRouter()
+
+onMounted(async () => {
+  const rawProjectInfoRes = await getProjectInfo(+route.params.projectId)
+  currentProjectInfo.value = rawProjectInfoRes.data
+  projectStore.setCurrentProject(currentProjectInfo.value)
+})
 // const settingNav = ['General', 'Build']
 
 let currentSettingNav = ref<string>(route.params.settingNav as string)

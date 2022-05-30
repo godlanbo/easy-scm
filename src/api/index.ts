@@ -73,6 +73,13 @@ export function createProject(projectInfo: RawProjectInfo) {
   })
 }
 
+export function getProjectInfo(projectId: number) {
+  return request<ProjectInfo>({
+    method: 'get',
+    url: `/project/${projectId}`,
+  })
+}
+
 export function triggerBuild(projectId: number, triggerBranch: string) {
   return request({
     method: 'post',
@@ -81,5 +88,57 @@ export function triggerBuild(projectId: number, triggerBranch: string) {
       projectId,
       triggerBranch,
     },
+  })
+}
+
+export function getBuildListByProject(projectId) {
+  return request<BuildInfo[]>({
+    method: 'get',
+    url: '/project/build/list',
+    params: {
+      projectId,
+    },
+  })
+}
+
+export function getBuildInfo(buildId) {
+  return request<BuildInfo>({
+    method: 'get',
+    url: `/project/build/${buildId}`,
+  })
+}
+
+export function deleteProject(projectId: number) {
+  return request({
+    method: 'delete',
+    url: `/project/${projectId}`,
+  })
+}
+
+export function getRoomBuildList(roomId: string) {
+  return request<BuildInfo[]>({
+    method: 'get',
+    url: `/build/list`,
+    params: {
+      roomId,
+    },
+  })
+}
+
+export function getRoomMemberList(roomId: string) {
+  return request<User[]>({
+    method: 'get',
+    url: '/user/about',
+    params: {
+      roomId,
+    },
+  })
+}
+
+export function patchProjectTriggerConfig(payload: ProjectInfo) {
+  return request({
+    method: 'patch',
+    url: '/project',
+    data: payload,
   })
 }

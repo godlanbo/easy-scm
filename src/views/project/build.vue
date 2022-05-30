@@ -5,13 +5,44 @@ import { useProjectStore, useBuildStore } from '../../store'
 import BuildStatusTag from '../../components/BuildStatusTag.vue'
 import { dateTransformer } from '../../utils'
 import { IconArrowDown, IconArrowUp } from '@arco-design/web-vue/es/icon'
+import { ref, watch, watchEffect } from 'vue'
+import { getBuildInfo } from '../../api'
+import { useWebSocket, useDebounce } from '@vueuse/core'
 
-const projectStore = useProjectStore()
+// const projectStore = useProjectStore()
 const route = useRoute()
-const currentProjectInfo = projectStore.currentProjectInfo
-const buildStore = useBuildStore()
-const currentBuildData = buildStore.getCurrentBuildItem(
-  route.params.buildId as string,
+const logContent = ref<HTMLDivElement>()
+// const currentProjectInfo = projectStore.currentProjectInfo
+// const buildStore = useBuildStore()
+const currentBuildData = ref<BuildInfo>()
+
+watchEffect(async () => {
+  const rawBuildInfoRes = await getBuildInfo(route.params.buildId)
+  currentBuildData.value = rawBuildInfoRes.data
+})
+
+const { data, status, close } = useWebSocket('ws://127.0.0.1:3001/project')
+const buffer = ref('')
+let timer = 0
+watch(
+  data,
+  (val, preVal) => {
+    console.log(val, preVal)
+    buffer.value += val ? val : ''
+    if (timer) {
+      clearTimeout(timer)
+    }
+    timer = setTimeout(() => {
+      if (logContent.value) {
+        logContent.value.innerText = buffer.value
+        buffer.value = ''
+        timer = 0
+      }
+    }, 150)
+  },
+  {
+    immediate: true,
+  },
 )
 </script>
 <template>
@@ -85,7 +116,8 @@ const currentBuildData = buildStore.getCurrentBuildItem(
         </div>
       </div>
       <div
-        class="log-content rounded-b-lg h-96 -mx-6 mt-6 py-6 bg-black-default"
+        ref="logContent"
+        class="log-content rounded-b-lg -mx-6 mt-6 p-6 text-base text-slate-50 font-semibold bg-black-default"
       ></div>
     </div>
   </div>

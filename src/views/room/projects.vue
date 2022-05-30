@@ -5,12 +5,23 @@ import ListItem from '../../components/ListItem.vue'
 import { dateTransformer } from '../../utils'
 import List from '../../components/List.vue'
 import { getRoomProjectList } from '../../api'
+import { useProjectStore } from '../../store'
+import { useRouter } from 'vue-router'
 const projectData = ref<ProjectInfo[]>([])
-
+const projectStore = useProjectStore()
+const router = useRouter()
 watchEffect(async () => {
   const rawRoomProjectRes = await getRoomProjectList()
   projectData.value = rawRoomProjectRes.data
 })
+
+function handleToProjects(projectInfo: ProjectInfo) {
+  projectStore.setCurrentProject(projectInfo)
+  router.push({
+    name: 'ProjectOverview',
+    params: { projectId: projectInfo.id },
+  })
+}
 
 function handleSearchList(searchValue: string) {
   console.log(searchValue)
@@ -29,7 +40,16 @@ function handleSearchList(searchValue: string) {
               @press-enter="handleSearchList($event.target.value)"
               @search="handleSearchList"
             ></a-input-search>
-            <a-button shape="round" type="primary">Add Project +</a-button>
+            <a-button
+              shape="round"
+              type="primary"
+              @click="
+                $router.push({
+                  name: 'CreateRepo',
+                })
+              "
+              >Add Project +</a-button
+            >
           </div>
         </template>
         <template #content>
@@ -41,6 +61,7 @@ function handleSearchList(searchValue: string) {
               :description="projectItem.desc"
               :cover="projectItem.cover"
               need-placeholder
+              @click="handleToProjects(projectItem)"
             >
               <template #detail>
                 <div class="list-item-detail self-start">

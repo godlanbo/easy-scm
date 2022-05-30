@@ -47,12 +47,12 @@ async function handleTriggerBuild() {
     Message.error('构建分支为必填')
   }
   await triggerBuild(newProjectId.value, triggerBranch.value)
-  // router.push({
-  //   name: 'ProjectOverview',
-  //   params: {
-  //     projectId: newProjectId.value,
-  //   },
-  // })
+  router.push({
+    name: 'ProjectOverview',
+    params: {
+      projectId: newProjectId.value,
+    },
+  })
 }
 async function handleCreateProject() {
   const craeteProjectRes = await createProject(rawProjectInfo)
@@ -219,10 +219,10 @@ function handleSelectBuildEnv(envTag) {
               </div>
             </div>
             <div class="input-line mt-6 flex items-center">
-              <div class="mask mr-4 whitespace-nowrap">构建脚本文件：</div>
+              <div class="mask mr-4 whitespace-nowrap">构建脚本：</div>
               <a-input
                 v-model="rawProjectInfo.buildFile"
-                placeholder="脚本文件"
+                placeholder="构建脚本"
                 allow-clear
               ></a-input>
             </div>

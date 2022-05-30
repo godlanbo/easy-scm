@@ -1,13 +1,24 @@
 <script setup lang="ts">
 import { IconEdit } from '@arco-design/web-vue/es/icon'
 import { computed } from '@vue/reactivity'
-import { ref, watch } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useOwnerStore, useProjectStore, useUserStore } from '../../store'
+import {
+  useOwnerStore,
+  useProjectStore,
+  useRoomStore,
+  useUserStore,
+} from '../../store'
 import { useRouteJudge } from '../../utils'
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+const roomStore = useRoomStore()
+
+watchEffect(async () => {
+  await roomStore.checkRoomExist()
+})
+
 function handleBackStart() {
   router.push({
     name: 'Start',

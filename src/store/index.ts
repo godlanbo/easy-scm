@@ -1,6 +1,11 @@
 import { defineStore } from 'pinia'
 import { Router, RouteRecordRaw, useRouter } from 'vue-router'
-import { getRoomInfo, getRoomProjectList, getUserInfo } from '../api'
+import {
+  getProjectInfo,
+  getRoomInfo,
+  getRoomProjectList,
+  getUserInfo,
+} from '../api'
 import { BUILD_STATUS, getUserCache, setUserCache } from '../utils'
 // import { projectBuildTabRoutes, projectTabRouters, roomTabRouters } from '../router'
 export const useOwnerStore = defineStore('owner', {
@@ -66,26 +71,7 @@ export const useProjectStore = defineStore('project', {
     currentRoomProjectList: ProjectInfo[]
   } => {
     return {
-      currentProjectInfo: {
-        id: 12,
-        owner: 'godlanbo',
-        ownerId: '10',
-        name: 'thisTestPro',
-        updateDate: '1651752179061',
-        createDate: '1651752179061',
-        isCollect: false,
-        desc: 'this is a test project',
-        cover:
-          'https://repository-images.githubusercontent.com/293860197/7fd72080-496d-11eb-8fe0-238b38a0746a',
-        version: '1.4.1',
-        repoUrl: 'https://github.com/settings/profile',
-        triggerBranch: 'main',
-        autoTrigger: true,
-        repoName: '11',
-        resDir: 'dist',
-        buildEnv: 'node12',
-        buildFile: 'build.sh',
-      },
+      currentProjectInfo: null,
       currentRoomProjectList: [],
     }
   },
@@ -96,6 +82,10 @@ export const useProjectStore = defineStore('project', {
     async getRoomProjectList() {
       const roomProjectListRes = await getRoomProjectList()
       this.currentRoomProjectList = roomProjectListRes.data
+    },
+    async refreshProjectInfo(projectId: number) {
+      const rawProjectRes = await getProjectInfo(projectId)
+      this.setCurrentProject(rawProjectRes.data)
     },
   },
 })

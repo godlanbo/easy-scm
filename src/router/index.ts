@@ -64,6 +64,7 @@ export const projectTabRouters: RouteRecordRaw[] = [
       to: 'ProjectSetting',
       tabName: 'Setting',
       showProject: true,
+      showRoom: true,
     },
     children: [
       {
