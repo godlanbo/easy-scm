@@ -21,7 +21,9 @@ watchEffect(async () => {
   currentBuildData.value = rawBuildInfoRes.data
 })
 
-const { data, status, close } = useWebSocket('ws://127.0.0.1:3001/project')
+const { data, status, close } = useWebSocket(
+  `ws://127.0.0.1:3001/${route.params.buildId}`,
+)
 const buffer = ref('')
 let timer = 0
 watch(
