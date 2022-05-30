@@ -36,7 +36,7 @@ watch(
     }
     timer = setTimeout(() => {
       if (logContent.value) {
-        logContent.value.innerText = buffer.value
+        logContent.value.innerText += buffer.value
         buffer.value = ''
         timer = 0
       }
