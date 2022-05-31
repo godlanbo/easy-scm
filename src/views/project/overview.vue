@@ -8,12 +8,31 @@ import { reactive, ref, watchEffect } from 'vue'
 import List from '../../components/List.vue'
 import BuildStatusTag from '../../components/BuildStatusTag.vue'
 import { useRoute } from 'vue-router'
-import { getBuildListByProject, getProjectInfo } from '../../api'
+import {
+  getBuildListByProject,
+  getProjectInfo,
+  getRepoBranchList,
+  patchProjectInfo,
+  triggerBuild,
+} from '../../api'
+import { computed } from '@vue/reactivity'
+import { Message } from '@arco-design/web-vue'
 const projectStore = useProjectStore()
 const buildData = ref<BuildInfo[]>([])
+const showBuildList = ref<BuildInfo[]>([])
 const route = useRoute()
 const projectInfo = ref<ProjectInfo | null>(projectStore.currentProjectInfo)
 const currentProjectId = ref<string>(route.params.projectId as string)
+const repoBranchList = ref<GithubRepoBranchItem[]>([])
+const triggerBranch = ref('')
+const dialogVisible = ref(false)
+const isInTrigger = computed(() => {
+  return (
+    buildData.value.findIndex(item => item.status === BUILD_STATUS.Loading) !==
+    -1
+  )
+})
+
 watchEffect(async () => {
   const rawProjectInfoRes = await getProjectInfo(+currentProjectId.value)
   projectInfo.value = rawProjectInfoRes.data
@@ -23,13 +42,71 @@ watchEffect(async () => {
 watchEffect(async () => {
   const rawBuildListRes = await getBuildListByProject(currentProjectId.value)
   buildData.value = rawBuildListRes.data
+  showBuildList.value = buildData.value
 })
 
 function handleSearchList(searchValue: string) {
   console.log(searchValue)
+  if (searchValue === '') {
+    showBuildList.value = buildData.value
+  } else {
+    showBuildList.value = buildData.value.filter(item => {
+      return item.buildBranch === searchValue
+    })
+  }
+}
+async function handleBeforeOpenModal() {
+  if (projectInfo.value) {
+    let res = await getRepoBranchList(
+      projectInfo.value?.ownerId,
+      projectInfo.value?.name,
+    )
+    repoBranchList.value = res.data
+  }
+}
+
+async function handleTriggerBuild() {
+  await triggerBuild(+route.params.projectId, triggerBranch.value)
+  const rawBuildListRes = await getBuildListByProject(currentProjectId.value)
+  buildData.value = rawBuildListRes.data
+  showBuildList.value = buildData.value
+}
+
+async function handleCoverUpload(imgSrc: string) {
+  if (projectInfo.value) {
+    await patchProjectInfo({
+      ...projectInfo.value,
+      cover: imgSrc,
+    })
+    Message.success('上传成功')
+    const rawProjectInfoRes = await getProjectInfo(+currentProjectId.value)
+    projectInfo.value = rawProjectInfoRes.data
+    projectStore.setCurrentProject(projectInfo.value)
+  }
 }
 </script>
 <template>
+  <a-modal
+    v-model:visible="dialogVisible"
+    title="触发构建"
+    @cancel="dialogVisible = false"
+    @ok="handleTriggerBuild"
+    @before-open="handleBeforeOpenModal"
+  >
+    <div class="flex items-center">
+      <div class="mask mr-4">选择触发分支：</div>
+      <div class="flex-grow">
+        <a-select
+          v-model="triggerBranch"
+          placeholder="Please select trigger branch"
+        >
+          <a-option v-for="branch in repoBranchList" :key="branch.commit.sha">{{
+            branch.name
+          }}</a-option>
+        </a-select>
+      </div>
+    </div>
+  </a-modal>
   <div class="project-container">
     <div class="layout-row">
       <RoomCard
@@ -75,7 +152,11 @@ function handleSearchList(searchValue: string) {
               </div>
             </div>
             <div class="project-info-cover">
-              <UploadImage class="w-56 h-40"></UploadImage>
+              <UploadImage
+                :src="projectInfo?.cover"
+                class="w-56 h-40"
+                @uploaded="handleCoverUpload"
+              ></UploadImage>
             </div>
           </div>
         </template>
@@ -86,7 +167,7 @@ function handleSearchList(searchValue: string) {
         <template #content>
           <List>
             <ListItem
-              v-for="buildItem in buildData"
+              v-for="buildItem in showBuildList"
               :key="buildItem.id"
               @click="
                 $router.push({
@@ -131,11 +212,16 @@ function handleSearchList(searchValue: string) {
             <a-input-search
               class="mr-4"
               search-button
-              placeholder="Search project name"
+              placeholder="Search build branch"
               @press-enter="handleSearchList($event.target.value)"
               @search="handleSearchList"
             ></a-input-search>
-            <a-button type="primary">触发构建</a-button>
+            <a-button
+              :disabled="isInTrigger"
+              type="primary"
+              @click="dialogVisible = true"
+              >触发构建</a-button
+            >
           </div>
         </template>
       </RoomCard>

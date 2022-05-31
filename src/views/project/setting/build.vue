@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import RoomCard from '../../../components/RoomCard.vue'
 import List from '../../../components/List.vue'
-import { getProjectInfo, patchProjectTriggerConfig } from '../../../api'
+import { getProjectInfo, patchProjectInfo } from '../../../api'
 import { useProjectStore } from '../../../store'
 import { useRoute } from 'vue-router'
 import { BUILD_ENV_LIST } from '../../../utils'
@@ -33,7 +33,7 @@ const bufferBuildConfig = reactive<{
 
 async function handleSaveProjectBuildModify() {
   if (currentProjectInfo.value) {
-    await patchProjectTriggerConfig({
+    await patchProjectInfo({
       ...currentProjectInfo.value,
       ...bufferBuildConfig,
     })

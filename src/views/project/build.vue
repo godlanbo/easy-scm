@@ -8,6 +8,7 @@ import { IconArrowDown, IconArrowUp } from '@arco-design/web-vue/es/icon'
 import { ref, watch, watchEffect } from 'vue'
 import { getBuildInfo } from '../../api'
 import { useWebSocket, useDebounce } from '@vueuse/core'
+import { Message } from '@arco-design/web-vue'
 
 // const projectStore = useProjectStore()
 const route = useRoute()
@@ -23,13 +24,22 @@ watchEffect(async () => {
 
 const { data, status } = useWebSocket(
   `ws://127.0.0.1:3001/${route.params.buildId}`,
+  {
+    async onDisconnected(ws, event) {
+      if (event.reason === 'success') {
+        Message.success('构建完成')
+        const rawBuildInfoRes = await getBuildInfo(route.params.buildId)
+        currentBuildData.value = rawBuildInfoRes.data
+      }
+    },
+  },
 )
 const buffer = ref('')
 let timer = 0
 watch(
   data,
   (val, preVal) => {
-    console.log(val, preVal)
+    // console.log(val, preVal)
     buffer.value += val ? val : ''
     if (timer) {
       clearTimeout(timer)
@@ -46,6 +56,13 @@ watch(
     immediate: true,
   },
 )
+
+function handleToBottom() {
+  document.documentElement.scrollTop = 99999
+}
+function handleToTop() {
+  document.documentElement.scrollTop = 0
+}
 </script>
 <template>
   <div class="layout-row">
@@ -105,12 +122,17 @@ watch(
       >
         <div class="title text-xl font-extrabold">构建日志</div>
         <div class="toolbar flex">
-          <a-button type="primary" class="mr-4" size="large">
+          <a-button
+            type="primary"
+            class="mr-4"
+            size="large"
+            @click="handleToBottom"
+          >
             <template #icon>
               <icon-arrow-down />
             </template>
           </a-button>
-          <a-button type="primary" size="large">
+          <a-button type="primary" size="large" @click="handleToTop">
             <template #icon>
               <icon-arrow-up />
             </template>

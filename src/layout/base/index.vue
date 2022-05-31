@@ -127,9 +127,9 @@ watch(route, (val, preVal) => {
       <router-view></router-view>
     </main>
     <footer
-      class="flex justify-center py-8 border-border-gray border-t border-solid"
+      class="flex justify-center py-8 border-border-gray border-t border-solid text-xl text-theme-primary"
     >
-      这是一个footer
+      Power by Godlanbo
     </footer>
   </div>
 </template>

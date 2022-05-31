@@ -47,7 +47,7 @@ const props = withDefaults(
       </template>
       <template v-else-if="needPlaceholder">
         <div
-          class="placeholder-cover rounded-lg mr-4 cursor-pointer text-6xl w-32 h-24 flex items-center justify-center bg-theme-primary/20"
+          class="placeholder-cover rounded-lg mr-4 cursor-pointer text-6xl w-28 h-20 flex items-center justify-center bg-theme-primary/20"
         >
           <i class="icon-fire text-theme-primary"></i>
         </div>

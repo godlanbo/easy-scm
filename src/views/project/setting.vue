@@ -5,7 +5,8 @@ import RoomCard from '../../components/RoomCard.vue'
 import UploadImage from '../../components/UploadImage.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref, watchEffect } from 'vue'
-import { getProjectInfo } from '../../api'
+import { getProjectInfo, patchProjectInfo } from '../../api'
+import { Message } from '@arco-design/web-vue'
 const projectStore = useProjectStore()
 const currentProjectInfo = ref<ProjectInfo | null>(
   projectStore.currentProjectInfo,
@@ -28,6 +29,18 @@ function handleSettingNavClick(key: string) {
       settingNav: key,
     },
   })
+}
+async function handleCoverUpload(imgSrc: string) {
+  if (currentProjectInfo.value) {
+    await patchProjectInfo({
+      ...currentProjectInfo.value,
+      cover: imgSrc,
+    })
+    Message.success('上传成功')
+    const rawProjectInfoRes = await getProjectInfo(+currentProjectInfo.value.id)
+    currentProjectInfo.value = rawProjectInfoRes.data
+    projectStore.setCurrentProject(currentProjectInfo.value)
+  }
 }
 </script>
 <template>
@@ -69,7 +82,11 @@ function handleSettingNavClick(key: string) {
               </div>
             </div>
             <div class="project-info-cover">
-              <UploadImage class="w-56 h-40"></UploadImage>
+              <UploadImage
+                :src="currentProjectInfo?.cover"
+                class="w-56 h-40"
+                @uploaded="handleCoverUpload"
+              ></UploadImage>
             </div>
           </div>
         </template>

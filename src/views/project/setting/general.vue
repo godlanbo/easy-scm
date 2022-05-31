@@ -4,11 +4,7 @@ import { dateTransformer } from '../../../utils'
 import RoomCard from '../../../components/RoomCard.vue'
 import List from '../../../components/List.vue'
 import { useRoute } from 'vue-router'
-import {
-  deleteProject,
-  getProjectInfo,
-  patchProjectTriggerConfig,
-} from '../../../api'
+import { deleteProject, getProjectInfo, patchProjectInfo } from '../../../api'
 import { onMounted, reactive, ref, watchEffect } from 'vue'
 import { Message } from '@arco-design/web-vue'
 
@@ -54,7 +50,7 @@ function handleTriggerBranchModify(enterValue?) {
 
 async function handleSaveProjectTriggerConfig() {
   if (currentProjectInfo.value) {
-    await patchProjectTriggerConfig({
+    await patchProjectInfo({
       ...currentProjectInfo.value,
       triggerBranch: bufferAutoTriggerInfo.value.triggerBranch[0],
       autoTrigger: bufferAutoTriggerInfo.value.autoTrigger as boolean,
@@ -68,7 +64,7 @@ async function handleSaveProjectTriggerConfig() {
 
 async function handleSaveProjectNameModify() {
   if (currentProjectInfo.value) {
-    await patchProjectTriggerConfig({
+    await patchProjectInfo({
       ...currentProjectInfo.value,
       name: bufferProjectName.value,
     })
@@ -200,9 +196,12 @@ const editAutoTrigger = ref(false)
           一旦你删除了这个项目，就没有回头路了。
         </p>
         <div>
-          <a-button type="primary" status="danger" @click="handleDeleteProject"
-            >删除这个项目</a-button
+          <a-popconfirm
+            content="你确定要删除这个项目吗?"
+            @ok="handleDeleteProject"
           >
+            <a-button type="primary" status="danger">删除这个项目</a-button>
+          </a-popconfirm>
         </div>
       </template>
     </RoomCard>

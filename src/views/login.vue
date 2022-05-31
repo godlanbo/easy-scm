@@ -9,12 +9,18 @@ import { isString } from '@vue/shared'
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
+
 const oauthUrl = `https://github.com/login/oauth/authorize?${generateUrlSearch({
   client_id: '40d8dd732ffe7a24d23b',
   scope: 'repo,user',
   redirect_uri: 'http://localhost:3000/api/oauth/redirect',
 })}`
 
+function handleLogin() {
+  const link = document.createElement('a')
+  link.href = oauthUrl
+  link.click()
+}
 onMounted(async () => {
   console.log('onMounted login')
   try {
@@ -53,8 +59,22 @@ onMounted(async () => {
 // })
 </script>
 <template>
-  <div class="login-container">
-    <a id="login" :href="oauthUrl">login github</a>
+  <div
+    class="login-container w-screen h-screen bg-theme-primary/50 flex items-center justify-center"
+  >
+    <!-- <a id="login" :href="oauthUrl">login github</a> -->
+    <div
+      class="bg-theme-text/80 flex flex-col py-6 px-20 rounded-lg shadow-2xl text-center"
+    >
+      <div class="icon-fire text-5xl text-theme-primary mb-6"></div>
+      <div
+        id="login"
+        class="bg-white w-full text-xl font-semibold p-4 rounded-lg cursor-pointer"
+        @click="handleLogin"
+      >
+        Login with github
+      </div>
+    </div>
   </div>
 </template>
 <style lang="scss" scoped></style>

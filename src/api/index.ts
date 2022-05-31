@@ -135,10 +135,18 @@ export function getRoomMemberList(roomId: string) {
   })
 }
 
-export function patchProjectTriggerConfig(payload: ProjectInfo) {
+export function patchProjectInfo(payload: ProjectInfo) {
   return request({
     method: 'patch',
     url: '/project',
+    data: payload,
+  })
+}
+
+export function patchRoomInfo(payload: RoomInfo) {
+  return request({
+    method: 'patch',
+    url: '/room',
     data: payload,
   })
 }

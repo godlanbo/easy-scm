@@ -8,7 +8,13 @@ import ListItem from '../../components/ListItem.vue'
 import List from '../../components/List.vue'
 import { useProjectStore, useRoomStore, useUserStore } from '../../store'
 import BuildStatusTag from '../../components/BuildStatusTag.vue'
-import { getRoomBuildList, getRoomMemberList } from '../../api'
+import {
+  getProjectInfo,
+  getRoomBuildList,
+  getRoomMemberList,
+  patchRoomInfo,
+} from '../../api'
+import { Message } from '@arco-design/web-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -52,6 +58,16 @@ function handleCardNavTo(routeName: string) {
   router.push({
     name: routeName,
   })
+}
+async function handleCoverUpload(imgSrc: string) {
+  if (roomStore.roomInfo) {
+    await patchRoomInfo({
+      ...roomStore.roomInfo,
+      cover: imgSrc,
+    })
+    Message.success('上传成功')
+    await roomStore.checkRoomExist()
+  }
 }
 console.log(route.params)
 </script>
@@ -135,6 +151,7 @@ console.log(route.params)
       <UploadImage
         class="mt-6 ml-4"
         :src="roomStore.roomInfo?.cover"
+        @uploaded="handleCoverUpload"
       ></UploadImage>
     </div>
     <div class="overview-row">
