@@ -108,6 +108,7 @@ console.log(route.params)
               </div>
             </div>
             <div
+              v-show="false"
               class="build-part relative mr-2 cursor-pointer hover:bg-gray-lighter transition-colors duration-200 basis-1/4 rounded-md overflow-hidden bg-gray-light"
               @click="
                 $router.push({
@@ -229,11 +230,12 @@ console.log(route.params)
       <RoomCard
         title="Members"
         min-height="424"
+        only-show
         @on-title-click="handleCardNavTo('Members')"
       >
-        <template #toolbar>
+        <!-- <template #toolbar>
           <a-button shape="round" type="primary">Add Member +</a-button>
-        </template>
+        </template> -->
         <template #content>
           <List>
             <ListItem

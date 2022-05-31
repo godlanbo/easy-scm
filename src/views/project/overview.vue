@@ -84,6 +84,12 @@ async function handleCoverUpload(imgSrc: string) {
     projectStore.setCurrentProject(projectInfo.value)
   }
 }
+
+async function handleDownload(buildItem: BuildInfo) {
+  const link = document.createElement('a')
+  link.href = `http://localhost:3000/dist/${currentProjectId.value}/zip-${buildItem.buildVersion}.zip`
+  link.click()
+}
 </script>
 <template>
   <a-modal
@@ -202,6 +208,18 @@ async function handleCoverUpload(imgSrc: string) {
                     >,
                     <span>构建版本：{{ buildItem.buildVersion }}</span>
                   </p>
+                </div>
+              </template>
+              <template #detail>
+                <div
+                  v-if="buildItem.status === BUILD_STATUS.Success"
+                  class="flex"
+                >
+                  <a-button
+                    type="outline"
+                    @click.stop="handleDownload(buildItem)"
+                    >产物下载</a-button
+                  >
                 </div>
               </template>
             </ListItem>
